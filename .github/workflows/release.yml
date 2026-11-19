@@ -1,6 +1,8 @@
 name: Package and Release
 
-# Deploy on all pushes to main, except '.github/**' folder.
+# Pushes to main: build the zip only, as a check (nothing is uploaded).
+# Tags (e.g. v1.0.0): build and publish to GitHub Releases, CurseForge and Wago.
+# Tags containing "alpha" or "beta" are published as alpha / beta files.
 on:
   push:
     branches:
@@ -10,20 +12,26 @@ on:
     paths-ignore:
       - '.github/**'
 
+# Lets the packager create the GitHub release.
+permissions:
+  contents: write
+
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    
+
     env:
-      GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+      CF_API_TOKEN: ${{ secrets.CF_API_KEY }}
+      WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+      GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    steps:    
+    steps:
       - name: Clone project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # full history, for the changelog
 
-      - uses: leafo/gh-actions-lua@v8.0.0
-
-      - name: Package and Release
+      - name: Package (main) / Package and release (tag)
         uses: BigWigsMods/packager@v2
         with:
-          args: -L
+          args: ${{ !startsWith(github.ref, 'refs/tags/') && '-d' || '' }}
