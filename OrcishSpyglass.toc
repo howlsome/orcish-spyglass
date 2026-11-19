@@ -1,0 +1,10 @@
+## Interface: 16001
+## Title: Orcish Spyglass
+## Notes: Rare and treasure alerts. Warns you when a rare, rare elite or treasure chest is nearby, pins it on your map, and tells you if someone else kills it. Type /spyglass for options.
+## Author: James Loveridge
+## Version: v1.0.0
+## Category: Map & Minimap
+## SavedVariables: OrcishSpyglassDB
+
+Core.lua
+Options.lua
